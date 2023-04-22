@@ -1,5 +1,5 @@
-var { INVALID_CREDENTIAL, PAGE_NOTFOUND }  = require( "../constants/message")
-var {BAD_REQUEST, NOT_FOUND} = require( "../constants/statusCode")
+const { AUTHENTICATE_FAILED } = require("../constants/message")
+var {BAD_REQUEST, NOT_FOUND, OK, UNAUTHORIZED, BAD_GATEWAY,} = require( "../constants/statusCode")
 
 const reponseUtil = (code, message, data) =>{
     return {
@@ -7,15 +7,31 @@ const reponseUtil = (code, message, data) =>{
     }
 }
 
-const BadRequestExeption = (response)=>{
-    return response.status(BAD_REQUEST).json(reponseUtil(BAD_REQUEST,INVALID_CREDENTIAL, null))
+const SuccessResponse = (response,message, data=null)=>{
+    return response.status(OK).json(reponseUtil(OK, message, data))
 }
 
-const NotFoundException = (response) =>{
-    return response.status(NOT_FOUND).json(reponseUtil(NOT_FOUND,PAGE_NOTFOUND, null))
+
+const BadRequestExeption = (response, message, error =null)=>{
+    return response.status(BAD_REQUEST).json(reponseUtil(BAD_REQUEST,message, error))
+}
+
+const NotFoundException = (response,message, error= null) =>{
+    return response.status(NOT_FOUND).json(reponseUtil(NOT_FOUND,message, error))
+}
+
+const AuthorizationExeption = (response, error=null) =>{
+    return response.status(UNAUTHORIZED).json(reponseUtil(UNAUTHORIZED,AUTHENTICATE_FAILED, error))
+}
+
+const BadGatewayExeption = (response,message, error=null)=>{
+    return response.status(BAD_GATEWAY).json(reponseUtil(BAD_GATEWAY, message,error))
 }
 
 module.exports = {
     BadRequestExeption,
-    NotFoundException
+    NotFoundException, 
+    SuccessResponse,
+    AuthorizationExeption,
+    BadGatewayExeption
 }

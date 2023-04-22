@@ -14,7 +14,15 @@ async function main(){
         }
     })
 
+    const other = await prisma.productCategory.upsert({
+        where: {name : "Other"},
+        update: {},
+        create: {
+            name: "Other",
+        }
+    })
     console.log(newAdmin);
+    console.log(other);
 }
 
 main().then(async ( )=>{
