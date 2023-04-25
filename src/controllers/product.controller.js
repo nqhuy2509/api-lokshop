@@ -3,6 +3,7 @@ const {PrismaClient} = require('@prisma/client')
 const { BadRequestExeption, SuccessResponse, BadGatewayExeption } = require('../utils/response')
 const { uploadToS3 } = require('../middleware/upload')
 const message = require('../constants/message')
+const { BAD_GATEWAY } = require('../constants/statusCode')
 
 const prisma = new PrismaClient
 
@@ -40,6 +41,25 @@ const addNewProduct = async (req,res)=>{
     }
 }
 
+const getAllProduct = async (req,res) =>{
+    try {
+        const products = await prisma.product.findMany({
+            include: {
+                category: {
+                    select: {
+                        name: true
+                    }
+                }
+            }
+        })
+        return SuccessResponse(res,message.REQUEST_SUCCESS, products)
+    } catch (error) {
+        return BAD_GATEWAY(res,message.SOMETHING_WRONG, error)
+    }
+
+}
+
 module.exports = {
-    addNewProduct
+    addNewProduct,
+    getAllProduct
 }

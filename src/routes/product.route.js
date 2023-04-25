@@ -7,5 +7,6 @@ const router = require('express').Router()
 const BASE_URL = "/api/v1/product/"
 
 router.post(BASE_URL, authenticate, upload.single('image'), controller.addNewProduct)
+router.get(BASE_URL,controller.getAllProduct)
 
 module.exports = router
