@@ -8,8 +8,6 @@ const prisma = new PrismaClient();
 
 const addNewProduct = async (req, res) => {
 	const { name, description, price, categoryId } = req.body;
-	const image = req.file.buffer;
-	const imageName = req.file.originalname;
 
 	if (!name || !price || !categoryId) {
 		return BadRequestExeption(res, 'Missing require parameter');
@@ -22,13 +20,22 @@ const addNewProduct = async (req, res) => {
 	}
 
 	try {
-		const s3Response = await uploadToS3(image, imageName);
+        let imageResource = null
+            
+        if(req.file){
+            const image = req.file.buffer;
+            const imageName = req.file.originalname;
+
+            imageResource = await uploadToS3(image, imageName)
+            
+        }
+		
 		const newProduct = await prisma.product.create({
 			data: {
 				name,
 				description,
 				price,
-				image: s3Response,
+				image: imageResource,
 				categoryId,
 			},
 		});
