@@ -6,7 +6,8 @@ const message = {
     SOMETHING_WRONG:"Sorry something went wrong!",
     REQUEST_SUCCESS: "Request succesfully",
     product: {
-        CREATE_SUCCESS: "Create product successfully"
+        CREATE_SUCCESS: "Create product successfully",
+        NOT_FOUND:"Product is not found!"
     }
     
 } 

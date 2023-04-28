@@ -10,5 +10,9 @@ router.get(BASE_URL+'categories', controller.getAllCategory)
 
 router.post(BASE_URL, authenticate, upload.single('image'), controller.addNewProduct)
 router.get(BASE_URL,controller.getAllProduct)
+router.get(BASE_URL+':id', controller.getProductById)
+router.put(BASE_URL, authenticate, upload.single('image'), controller.updateProductById)
+
+
 
 module.exports = router
