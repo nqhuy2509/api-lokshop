@@ -91,34 +91,31 @@ const updateProductById = async (req, res) => {
 		return NotFoundException(res, message.product.NOT_FOUND);
 	}
 
-	if (name && name != '') {
+	if (name && name !== '') {
 		exist.name = name;
 	}
 	if (categoryId) {
 		exist.categoryId = categoryId;
 	}
-	if (description && description != '') {
+	if (description && description !== '') {
 		exist.description = description;
 	}
 	if (price) {
 		exist.price = price;
 	}
 
-
 	try {
-
 		if (req.file) {
-
 			const image = req.file.buffer;
 			const imageName = req.file.originalname;
 
 			const imageResource = await uploadToS3(image, imageName);
 
-			if(exist.image){
-				await deleteS3(exist.image)
+			if (exist.image) {
+				await deleteS3(exist.image);
 			}
 
-			exist.image = imageResource
+			exist.image = imageResource;
 		}
 
 		const updated = await prisma.product.update({
@@ -128,6 +125,36 @@ const updateProductById = async (req, res) => {
 		return SuccessResponse(res, message.REQUEST_SUCCESS, updated);
 	} catch (error) {
 		return BadGatewayExeption(res, message.SOMETHING_WRONG, error);
+	}
+};
+
+const deleteProductById = async (req, res) => {
+	try {
+		const { id } = req.body;
+		if (!id) {
+			return BadRequestExeption(res, message.product.NOT_FOUND);
+		}
+		const exist = await prisma.product.findUnique({
+			where: {
+				id,
+			},
+		});
+
+		if (!exist) {
+			return BadRequestExeption(res, message.product.NOT_FOUND);
+		}
+
+		if (exist.image) {
+			await deleteS3(exist.image);
+		}
+
+		const deleteProduct = await prisma.product.delete({where: {
+			id
+		}})
+
+		return SuccessResponse(res, message.REQUEST_SUCCESS, deleteProduct);
+	} catch (e) {
+		return BadGatewayExeption(res,message.SOMETHING_WRONG,e)
 	}
 };
 
@@ -146,4 +173,5 @@ module.exports = {
 	getAllCategory,
 	getProductById,
 	updateProductById,
+    deleteProductById
 };
