@@ -1,5 +1,5 @@
 const { PrismaClient } = require('@prisma/client');
-const { BadRequestExeption, SuccessResponse, BadGatewayExeption, NotFoundException } = require('../utils/response');
+const { BadRequestException, SuccessResponse, BadGatewayException, NotFoundException } = require('../utils/response');
 const { uploadToS3, deleteS3 } = require('../middleware/upload');
 const message = require('../constants/message');
 const { BAD_GATEWAY } = require('../constants/statusCode');
@@ -10,13 +10,13 @@ const addNewProduct = async (req, res) => {
 	const { name, description, price, categoryId } = req.body;
 
 	if (!name || !price || !categoryId) {
-		return BadRequestExeption(res, 'Missing require parameter');
+		return BadRequestException(res, 'Missing require parameter');
 	}
 
 	const existCategory = await prisma.productCategory.findUnique({ where: { id: categoryId } });
 
 	if (!existCategory) {
-		return BadRequestExeption(res, 'Category is not found');
+		return BadRequestException(res, 'Category is not found');
 	}
 
 	try {
@@ -42,7 +42,7 @@ const addNewProduct = async (req, res) => {
 		return SuccessResponse(res, message.product.CREATE_SUCCESS, newProduct);
 	} catch (error) {
 		console.log(error);
-		return BadGatewayExeption(res, message.SOMETHING_WRONG, error);
+		return BadGatewayException(res, error = error);
 	}
 };
 
@@ -62,7 +62,7 @@ const getAllProduct = async (req, res) => {
 		});
 		return SuccessResponse(res, message.REQUEST_SUCCESS, products);
 	} catch (error) {
-		return BadGatewayExeption(res, message.SOMETHING_WRONG, error);
+		return BadGatewayException(res,error = error);
 	}
 };
 
@@ -75,7 +75,7 @@ const getProductById = async (req, res) => {
 		}
 		return SuccessResponse(res, message.REQUEST_SUCCESS, exist);
 	} catch (error) {
-		return BadGatewayExeption(res, message.SOMETHING_WRONG, error);
+		return BadGatewayException(res, error = error);
 	}
 };
 
@@ -124,7 +124,7 @@ const updateProductById = async (req, res) => {
 		});
 		return SuccessResponse(res, message.REQUEST_SUCCESS, updated);
 	} catch (error) {
-		return BadGatewayExeption(res, message.SOMETHING_WRONG, error);
+		return BadGatewayException(res,error =  error);
 	}
 };
 
@@ -132,7 +132,7 @@ const deleteProductById = async (req, res) => {
 	try {
 		const { id } = req.body;
 		if (!id) {
-			return BadRequestExeption(res, message.product.NOT_FOUND);
+			return BadRequestException(res, message.product.NOT_FOUND);
 		}
 		const exist = await prisma.product.findUnique({
 			where: {
@@ -141,7 +141,7 @@ const deleteProductById = async (req, res) => {
 		});
 
 		if (!exist) {
-			return BadRequestExeption(res, message.product.NOT_FOUND);
+			return BadRequestException(res, message.product.NOT_FOUND);
 		}
 
 		if (exist.image) {
@@ -154,7 +154,7 @@ const deleteProductById = async (req, res) => {
 
 		return SuccessResponse(res, message.REQUEST_SUCCESS, deleteProduct);
 	} catch (e) {
-		return BadGatewayExeption(res,message.SOMETHING_WRONG,e)
+		return BadGatewayException(res,error = e)
 	}
 };
 
@@ -163,7 +163,7 @@ const getAllCategory = async (req, res) => {
 		const categories = await prisma.productCategory.findMany({});
 		return SuccessResponse(res, message.REQUEST_SUCCESS, categories);
 	} catch (error) {
-		return BadGatewayExeption(res, message.SOMETHING_WRONG, error);
+		return BadGatewayException(res,error = error);
 	}
 };
 

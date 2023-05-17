@@ -1,15 +1,15 @@
 var jwt = require('jsonwebtoken');
-var { AuthorizationExeption } = require('../utils/response');
+var { AuthorizationException } = require('../utils/response');
 
 module.exports = async (req, res, next) => {
 	if (!req.headers || !req.headers.authorization || !req.headers.authorization.startsWith('Bearer ')) {
-		return AuthorizationExeption(res, null);
+		return AuthorizationException(res, null);
 	}
 
 	const token = req.headers.authorization?.split(' ')[1];
 
 	if (!token) {
-		return AuthorizationExeption(res, null);
+		return AuthorizationException(res, null);
 	}
 
 	try {
@@ -19,6 +19,6 @@ module.exports = async (req, res, next) => {
 
 		next();
 	} catch (error) {
-		return AuthorizationExeption(res, null);
+		return AuthorizationException(res, null);
 	}
 };

@@ -1,5 +1,5 @@
 const {PrismaClient} = require('@prisma/client')
-const { BadRequestExeption, SuccessResponse, AuthorizationExeption } = require('../utils/response')
+const { BadRequestException, SuccessResponse, AuthorizationException } = require('../utils/response')
 const { INVALID_CREDENTIAL, LOGIN_SUCCESS } = require('../constants/message')
 const bcrypt = require('bcryptjs')
 const { createToken } = require('../utils/token')
@@ -12,7 +12,7 @@ const handleLogin = async (req,res) =>{
     const {username, password} = req.body
 
     if(!username || !password){
-        return BadRequestExeption(res, INVALID_CREDENTIAL, null)
+        return BadRequestException(res, INVALID_CREDENTIAL, null)
     }
 
     const exist = await prisma.admin.findUnique({
@@ -22,12 +22,12 @@ const handleLogin = async (req,res) =>{
     })
 
     if(!exist){
-        return BadRequestExeption(res, INVALID_CREDENTIAL, null)
+        return BadRequestException(res, INVALID_CREDENTIAL, null)
     }
     const isMatchPass = await bcrypt.compare(password, exist.password)
 
     if(!isMatchPass){
-        return BadRequestExeption(res, INVALID_CREDENTIAL, null)
+        return BadRequestException(res, INVALID_CREDENTIAL, null)
     }
 
     const token = createToken({sub: exist.email})
@@ -41,7 +41,7 @@ const handleLogin = async (req,res) =>{
 const getProfile = async (req,res) =>{
     const email = req.user
     if(!email){
-        return AuthorizationExeption(res, null)
+        return AuthorizationException(res, null)
     }
 
     

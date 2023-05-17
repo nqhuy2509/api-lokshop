@@ -13,6 +13,7 @@ app.use(cors())
 
 app.use(require('./routes/admin.route'))
 app.use(require('./routes/product.route'))
+app.use(require('./routes/order.route'))
 
 app.use(require('./middleware/errorHandler'))
 
